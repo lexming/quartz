@@ -29,17 +29,19 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
     if (text) {
       const segments: (string | JSX.Element)[] = []
 
+      // Display date if explicitly set (not today)
       if (fileData.dates && !isToday(fileData.dates.created)) {
         segments.push(<NodeDate date={getDate(cfg, fileData)!} locale={cfg.locale} />)
-      }
 
-      // Display reading time if enabled
-      if (options.showReadingTime) {
-        const { minutes, words: _words } = readingTime(text)
-        const displayedTime = i18n(cfg.locale).components.contentMeta.readingTime({
-          minutes: Math.ceil(minutes),
-        })
-        segments.push(<span>{displayedTime}</span>)
+        // Display reading time if enabled
+        // only for dated documents
+        if (options.showReadingTime) {
+          const { minutes, words: _words } = readingTime(text)
+          const displayedTime = i18n(cfg.locale).components.contentMeta.readingTime({
+            minutes: Math.ceil(minutes),
+          })
+          segments.push(<span>{displayedTime}</span>)
+        }
       }
 
       return (
